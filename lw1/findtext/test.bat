@@ -44,7 +44,12 @@ if NOT ERRORLEVEL 1 goto err
 
 rem При запуске с правильными параметрами ожидается ненулевой код возврата(пустой файл)
 echo test8
-%PROGRAM% emptyFile.txt "search line" >nul
+%PROGRAM% test-data\emptyFile.txt "search line" >nul
+if NOT ERRORLEVEL 1 goto err
+
+rem При запуске с правильными параметрами ожидается ненулевой код возврата(стая строка
+echo test9
+%PROGRAM% test-data\inputFile.txt "" >nul
 if NOT ERRORLEVEL 1 goto err
 
 echo OK
