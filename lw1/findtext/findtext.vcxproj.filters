@@ -48,5 +48,8 @@
     <Text Include="test-data\test.txt">
       <Filter>Исходные файлы\test-data</Filter>
     </Text>
+    <Text Include="test-data\emptyFile.txt">
+      <Filter>Исходные файлы\test-data</Filter>
+    </Text>
   </ItemGroup>
 </Project>

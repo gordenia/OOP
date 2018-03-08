@@ -176,6 +176,7 @@
     <None Include="test.bat" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="test-data\emptyFile.txt" />
     <Text Include="test-data\inputFile.txt" />
     <Text Include="test-data\resultAfterSearchNeed.txt" />
     <Text Include="test-data\test.txt" />

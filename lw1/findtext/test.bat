@@ -42,6 +42,11 @@ echo test7
 fc.exe "%TEMP%\result.txt" test-data\resultAfterSearchNeed.txt > nul
 if NOT ERRORLEVEL 1 goto err
 
+rem ѕри запуске с правильными параметрами ожидаетс€ ненулевой код возврата(пустой файл)
+echo test8
+%PROGRAM% emptyFile.txt "search line" >nul
+if NOT ERRORLEVEL 1 goto err
+
 echo OK
 exit 0
 
