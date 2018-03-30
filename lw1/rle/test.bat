@@ -9,63 +9,24 @@ echo test1
 %PROGRAM% >nul
 if NOT ERRORLEVEL 1 goto err
 
-rem При неудачном открытии файла ожидается ненулевой код возврата
+rem При запуске с некорректными параметрами ожидается ненулевой код возврата(неверный параметр)
 echo test2
-%PROGRAM% fileNotFound.txt >nul
+%PROGRAM% hamster test-data\inputFile.txt test-data\outputFile.txt >nul
 if NOT ERRORLEVEL 1 goto err
 
-rem При запуске с правильными параметрами ожидается ненулевой код возврата(пустой файл)
+rem При запуске с корректными параметрами ожидается ненулевой код возврата(одинаковое название входного и выходного файлов)
 echo test3
-%PROGRAM% test-data\emptyFile.txt >nul
+%PROGRAM% pack test-data\inputFile.txt test-data\inputFile.txt >nul
 if NOT ERRORLEVEL 1 goto err
 
-rem При запуске с правильными параметрами ожидается ненулевой код возврата(некорректные данные в файле)
+rem При запуске с некорректными параметрами ожидается ненулевой код возврата(входной файл не найден)
 echo test4
-%PROGRAM% test-data\matrixErr1.txt >nul
+%PROGRAM% pack test-data\fileNotFound.txt test-data\outputFile.txt >nul
 if NOT ERRORLEVEL 1 goto err
 
-rem При запуске с правильными параметрами ожидается ненулевой код возврата(некорректные данные в файле)
+rem При запуске с некорректными параметрами ожидается ненулевой код возврата(выходной файл не найден)
 echo test5
-%PROGRAM% test-data\matrixErr2.txt >nul
-if NOT ERRORLEVEL 1 goto err
-
-rem При запуске с правильными параметрами ожидается ненулевой код возврата(определитель = 0)
-echo test6
-%PROGRAM% test-data\matrixErr3.txt >nul
-if NOT ERRORLEVEL 1 goto err
-
-rem При запуске с правильными параметрами ожидается нулевой код возврата(исходный и результирующий файлы совпадают)
-echo test7
-%PROGRAM% test-data\matrix1.txt> "%TEMP%\invertedMatrixResult.txt" 
-fc.exe "%TEMP%\invertedMatrixResult.txt" test-data\invertedMatrix.txt > nul
-if ERRORLEVEL 1 goto err
-
-rem При запуске с правильными параметрами ожидается нулевой код возврата(исходный и результирующий файлы не совпадают)
-echo test8
-%PROGRAM% test-data\matrix1.txt> "%TEMP%\invertedMatrixResult.txt" 
-fc.exe "%TEMP%\invertedMatrixResult.txt" test-data\invertedMatrixErr.txt > nul
-if NOT ERRORLEVEL 1 goto err
-
-echo OK
-exit 0
-
-:err
-echo Program testing failed
-exit 1
-
-
-
-
-
-
-
-
-
-
-
-rem При запуске с корректными параметрами ожидается ненулевой код возврата(выходной файл не найден)
-echo test5
-%PROGRAM% pack test-data\inputFile.txt test-data\fileNotFound.txt >nul
+%PROGRAM% pack test-data\fileNotFound.txt outputFile.txt >nul
 if NOT ERRORLEVEL 1 goto err
 
 rem При запуске с корректными параметрами ожидается нулевой код возврата(входной файл пустой, файл на выходе должен быть пустым)
@@ -92,19 +53,31 @@ echo test9
 fc.exe test-data\outputFile.txt test-data\output_m_257.bin > nul
 if ERRORLEVEL 1 goto err
 
-rem При запуске с корректными параметрами ожидается нулевой код возврата(нечетная длина запакованного файла)
+rem При запуске с корректными параметрами ожидается ненулевой код возврата(нечетная длина запакованного файла)
 echo test10
 %PROGRAM% unpack test-data\inputFileOddLength.txt test-data\outputFile.txt >nul
 if NOT ERRORLEVEL 1 goto err
 
-rem При запуске с корректными параметрами ожидается нулевой код возврата(в запакованном файле есть кол-во символов = 0)
+rem При запуске с корректными параметрами ожидается ненулевой код возврата(в запакованном файле есть кол-во символов = 0)
 echo test11
 %PROGRAM% unpack test-data\inputFileWithCountCharNull.bin test-data\outputFile.txt >nul
 if NOT ERRORLEVEL 1 goto err
 
 rem При запуске с корректными параметрами ожидается нулевой код возврата(фактический и ожидаемый результат совпадают)
-rem echo test12
-rem %PROGRAM% pack test-data\inputFile.txt test-data\outputFile.txt >nul
-rem %PROGRAM% unpack test-data\outputFile.txt "%TEMP%\decompressionFile.txt" >nul
-rem fc.exe test-data\inputFile.txt "%TEMP%\decompressionFile.txt" > nul
-rem if ERRORLEVEL 1 goto err
+echo test12
+%PROGRAM% pack test-data\inputFile.txt test-data\outputFile.txt >nul
+%PROGRAM% unpack test-data\outputFile.txt "%TEMP%\decompressionFile.txt" >nul
+fc.exe test-data\inputFile.txt "%TEMP%\decompressionFile.txt" > nul
+if ERRORLEVEL 1 goto err
+
+rem При запуске с корректными параметрами ожидается нулевой код возврата(во входном файле есть символ с кодом FF )
+echo test13
+%PROGRAM% pack test-data\inputFileWithCountCharNull.bin test-data\outputFile.txt >nul
+if ERRORLEVEL 1 goto err
+
+echo OK
+exit 0
+
+:err
+echo Program testing failed
+exit 1
