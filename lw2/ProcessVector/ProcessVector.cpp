@@ -3,9 +3,10 @@
 #include <iterator>
 #include <iostream>
 
-void GetVector(std::istream &input, std::vector<double> &numbers)
+std::vector<double> GetVector(std::istream &input)
 {
-	std::copy(std::istream_iterator<double>(input), std::istream_iterator<double>(), std::back_inserter(numbers));
+	std::vector<double> numbers(std::istream_iterator<double>(input), (std::istream_iterator<double>()));
+	return numbers;
 }
 
 void ProcessVector(std::vector<double> &numbers)
@@ -21,6 +22,7 @@ void ProcessVector(std::vector<double> &numbers)
 
 void PrintVector(std::ostream &output, const std::vector<double> &numbers)
 {
+	std::cout << std::fixed << std::setprecision(3);
 	std::copy(numbers.begin(), numbers.end(), std::ostream_iterator<double>(output, " "));
 	std::cout << std::endl;
 }

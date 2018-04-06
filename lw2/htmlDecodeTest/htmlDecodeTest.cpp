@@ -8,4 +8,5 @@ TEST_CASE("htmlDecode test")
 	CHECK(HtmlDecode("&quot;&apos;&lt;&gt;&amp;") == "\"'<>&");
 	CHECK(HtmlDecode("&quot") == "&quot");
 	CHECK(HtmlDecode(";&amp;;&apos") == ";&;&apos");
+	CHECK(HtmlDecode("&amp;lt;") == "&lt;");
 }

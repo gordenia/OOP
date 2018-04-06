@@ -1,6 +1,6 @@
 #pragma once
 
-void GetVector(std::istream &input, std::vector<double> &numbers);
+std::vector<double> GetVector(std::istream &input);
 
 void ProcessVector(std::vector<double> &numbers);
 
