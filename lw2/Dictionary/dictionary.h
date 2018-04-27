@@ -14,18 +14,20 @@ typedef std::map<std::string, std::string> Dictionary;
 
 std::ifstream OpenFileForReading(const std::string& fileName);
 
+Dictionary LoadDictionary(const std::string &fileName);
+
 void ProcessInputString(const std::string &inputString, Dictionary &dictionary, bool &dictionaryChange);
 
-void AddWordToDictionary(const std::string &word, const std::string &translation, Dictionary &dictionary);
+void AddTranslation(const std::string &word, const std::string &translation, Dictionary &dictionary);
 
 void AddNewWord(const std::string &inputString, Dictionary &dictionary, bool &dictionaryChange);
 
-std::string FindWordInDictionary(const std::string &word, Dictionary &dictionary);
+std::string FindTranslation(const std::string &word, Dictionary &dictionary);
 
-void CopyFileToDictionary(std::ifstream &inputFile, Dictionary &dictionary);
+Dictionary ReadDictionary(std::istream &inputFile);
 
-void SaveDictionaryToFile(std::ofstream &inputFile, Dictionary &dictionary);
+void WriteDictionary(std::ostream &inputFile, Dictionary &dictionary);
 
-void MakeChangeToDictionary(std::string &fileName, Dictionary &dictionary);
+void SaveDictionary(std::string &fileName, Dictionary &dictionary);
 
-void TranslateText(std::string &inputFileName, Dictionary &dictionary);
+bool ProcessUserInput(Dictionary &dictionary);

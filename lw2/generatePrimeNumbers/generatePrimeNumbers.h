@@ -1,12 +1,16 @@
 #pragma once
 #include <set>
 
+bool CheckCountArgement(int countArgument);
+
 bool GetNumber(const std::string &arg, int &upperBound);
 
-std::set<int> GeneratePrimeNumbersSet(int upperBound);
+void ExcludeMultiplesOf(size_t i, std::vector<bool> &isPrime);
 
-void UseSieveErythosthene(std::vector<bool> &sieve);
+std::set<size_t> GeneratePrimeNumbersSet(size_t upperBound);
 
-std::set<int> GetPrimeNumbers(const std::vector<bool> &numbers);
+std::vector<bool> SiftEratosthenesSieve(size_t upperBound);
 
-void PrintPrimeNumbers(std::ostream &output, const std::set<int> &primeNumbers);
+std::set<size_t> GetPrimeNumbers(const std::vector<bool> &numbers);
+
+void PrintPrimeNumbers(std::ostream &output, const std::set<size_t> &primeNumbers);

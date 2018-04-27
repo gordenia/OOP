@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "../generatePrimeNumbers/generatePrimeNumbers.h"
 
-bool IsEqual(const std::set<int> &x, const std::set<int> &y)
+bool IsEqual(const std::set<size_t> &x, const std::set<size_t> &y)
 {
 	return x == y;
 }
@@ -24,4 +24,7 @@ TEST_CASE("Test GeneratePrimeNumbersSet")
 	CHECK(IsEqual(GeneratePrimeNumbersSet(1), {}));
 	CHECK(IsEqual(GeneratePrimeNumbersSet(0), {}));
 	CHECK(IsEqual(GeneratePrimeNumbersSet(2), { 2 }));
+	CHECK(IsEqual(GeneratePrimeNumbersSet(7), {2, 3, 5, 7}));
+	CHECK(IsEqual(GeneratePrimeNumbersSet(17), { 2, 3, 5, 7, 11, 13, 17 }));
+	CHECK(GeneratePrimeNumbersSet(100000000).size() == 5761455);
 }

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "dictionary.h"
 
-std::ifstream OpenFileForReading(const std::string& fileName)
+std::ifstream OpenFileForReading(const std::string &fileName)
 {
 	std::ifstream strm(fileName);
 
@@ -11,13 +11,30 @@ std::ifstream OpenFileForReading(const std::string& fileName)
 	return strm;
 }
 
-void AddWordToDictionary(const std::string &word, const std::string &translation, Dictionary &dictionary)
+Dictionary LoadDictionary(const std::string &fileName)
+{
+	std::ifstream inputFile;
+	Dictionary dictionary;
+
+	inputFile = OpenFileForReading(fileName);
+
+	if (inputFile)
+	{
+		dictionary = ReadDictionary(inputFile);
+		inputFile.close();
+	}
+
+	return dictionary;
+}
+
+
+void AddTranslation(const std::string &word, const std::string &translation, Dictionary &dictionary)
 {
 	dictionary.insert({ word, translation });
 	dictionary.insert({ translation, word });
 }
 
-std::string FindWordInDictionary(const std::string &word, Dictionary &dictionary)
+std::string FindTranslation(const std::string &word, Dictionary &dictionary)
 {
 	auto pairWordTranslation = dictionary.find(word);
 
@@ -29,24 +46,27 @@ std::string FindWordInDictionary(const std::string &word, Dictionary &dictionary
 		return {};
 }
 
-void CopyFileToDictionary(std::ifstream &inputFile, Dictionary &dictionary)
+Dictionary ReadDictionary(std::istream &inputFile)
 {
 	std::string word, translation;
+	Dictionary dictionary;
 
 	dictionary.clear();
 
 	while (getline(inputFile, word) && (getline(inputFile, translation)))
 	{
-		std::string foundWord = FindWordInDictionary(word, dictionary);
+		std::string foundWord = FindTranslation(word, dictionary);
 
 		if (foundWord.empty())
 		{
-			AddWordToDictionary(word, translation, dictionary);
+			AddTranslation(word, translation, dictionary);
 		}
 	}
+
+	return dictionary;
 }
 
-void SaveDictionaryToFile(std::ofstream &inputFile, Dictionary &dictionary)
+void WriteDictionary(std::ostream &inputFile, Dictionary &dictionary)
 {
 	for (auto &word : dictionary)
 	{
@@ -63,7 +83,7 @@ void AddNewWord(const std::string &word, Dictionary &dictionary, bool &dictionar
 
 	if (!translation.empty())
 	{
-		AddWordToDictionary(word, translation, dictionary);
+		AddTranslation(word, translation, dictionary);
 		std::cout << "Слово \"" << word << "\" сохранено в словаре как \"" << translation << "\"." << std::endl;
 		dictionaryChange = true;
 	}
@@ -76,7 +96,7 @@ void AddNewWord(const std::string &word, Dictionary &dictionary, bool &dictionar
 
 void ProcessInputString(const std::string &inputString, Dictionary &dictionary, bool &dictionaryChange)
 {
-	std::string foundWord = FindWordInDictionary(inputString, dictionary);
+	std::string foundWord = FindTranslation(inputString, dictionary);
 
 	if (!foundWord.empty())
 	{
@@ -88,7 +108,7 @@ void ProcessInputString(const std::string &inputString, Dictionary &dictionary, 
 	}
 }
 
-void MakeChangeToDictionary(std::string &inputFileName, Dictionary &dictionary)
+void SaveDictionary(std::string &inputFileName, Dictionary &dictionary)
 {
 	char exit;
 	std::cout << "В словарь были внесены изменения. Введите Y или y для сохранения перед выходом." << std::endl;
@@ -106,7 +126,7 @@ void MakeChangeToDictionary(std::string &inputFileName, Dictionary &dictionary)
 		}
 
 		std::ofstream inputFile(inputFileName);
-		SaveDictionaryToFile(inputFile, dictionary);
+		WriteDictionary(inputFile, dictionary);
 		std::cout << "Изменения сохранены. До свидания." << std::endl;
 	}
 	else
@@ -115,7 +135,7 @@ void MakeChangeToDictionary(std::string &inputFileName, Dictionary &dictionary)
 	}
 }
 
-void TranslateText(std::string &inputFileName, Dictionary &dictionary)
+bool ProcessUserInput(Dictionary &dictionary)
 {
 	std::string inputString;
 	bool dictionaryChange = false;
@@ -131,12 +151,5 @@ void TranslateText(std::string &inputFileName, Dictionary &dictionary)
 		}
 	}
 
-	if (dictionaryChange)
-	{
-		MakeChangeToDictionary(inputFileName, dictionary);
-	}
-	else
-	{
-		std::cout << "Завершение работы со словарем" << std::endl;
-	}
+	return dictionaryChange;
 }
