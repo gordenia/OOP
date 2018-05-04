@@ -34,7 +34,7 @@ void AddTranslation(const std::string &word, const std::string &translation, Dic
 	dictionary.insert({ translation, word });
 }
 
-std::string FindTranslation(const std::string &word, Dictionary &dictionary)
+std::string FindTranslation(const std::string &word, const Dictionary &dictionary)
 {
 	auto pairWordTranslation = dictionary.find(word);
 
@@ -108,7 +108,7 @@ void ProcessInputString(const std::string &inputString, Dictionary &dictionary, 
 	}
 }
 
-void SaveDictionary(std::string &inputFileName, Dictionary &dictionary)
+void SaveDictionary(std::string inputFileName, Dictionary &dictionary)
 {
 	char exit;
 	std::cout << "В словарь были внесены изменения. Введите Y или y для сохранения перед выходом." << std::endl;

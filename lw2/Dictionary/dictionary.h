@@ -22,12 +22,12 @@ void AddTranslation(const std::string &word, const std::string &translation, Dic
 
 void AddNewWord(const std::string &inputString, Dictionary &dictionary, bool &dictionaryChange);
 
-std::string FindTranslation(const std::string &word, Dictionary &dictionary);
+std::string FindTranslation(const std::string &word, const Dictionary &dictionary);
 
 Dictionary ReadDictionary(std::istream &inputFile);
 
 void WriteDictionary(std::ostream &inputFile, Dictionary &dictionary);
 
-void SaveDictionary(std::string &fileName, Dictionary &dictionary);
+void SaveDictionary(std::string fileName, Dictionary &dictionary);
 
 bool ProcessUserInput(Dictionary &dictionary);
