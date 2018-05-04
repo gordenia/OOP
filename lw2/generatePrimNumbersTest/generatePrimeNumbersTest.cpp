@@ -26,5 +26,11 @@ TEST_CASE("Test GeneratePrimeNumbersSet")
 	CHECK(IsEqual(GeneratePrimeNumbersSet(2), { 2 }));
 	CHECK(IsEqual(GeneratePrimeNumbersSet(7), {2, 3, 5, 7}));
 	CHECK(IsEqual(GeneratePrimeNumbersSet(17), { 2, 3, 5, 7, 11, 13, 17 }));
+}
+
+#ifndef _DEBUG
+TEST_CASE("count the number of primes")
+{
 	CHECK(GeneratePrimeNumbersSet(100000000).size() == 5761455);
 }
+#endif
