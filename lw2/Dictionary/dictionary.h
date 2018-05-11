@@ -26,8 +26,8 @@ std::string FindTranslation(const std::string &word, const Dictionary &dictionar
 
 Dictionary ReadDictionary(std::istream &inputFile);
 
-void WriteDictionary(std::ostream &inputFile, Dictionary &dictionary);
+void WriteDictionary(std::ostream &inputFile, const Dictionary &dictionary);
 
-void SaveDictionary(std::string fileName, Dictionary &dictionary);
+void SaveDictionary(std::string fileName, const Dictionary &dictionary);
 
 bool ProcessUserInput(Dictionary &dictionary);

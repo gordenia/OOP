@@ -66,7 +66,7 @@ Dictionary ReadDictionary(std::istream &inputFile)
 	return dictionary;
 }
 
-void WriteDictionary(std::ostream &inputFile, Dictionary &dictionary)
+void WriteDictionary(std::ostream &inputFile, const Dictionary &dictionary)
 {
 	for (auto &word : dictionary)
 	{
@@ -108,7 +108,7 @@ void ProcessInputString(const std::string &inputString, Dictionary &dictionary, 
 	}
 }
 
-void SaveDictionary(std::string inputFileName, Dictionary &dictionary)
+void SaveDictionary(std::string inputFileName, const Dictionary &dictionary)
 {
 	char exit;
 	std::cout << "В словарь были внесены изменения. Введите Y или y для сохранения перед выходом." << std::endl;
