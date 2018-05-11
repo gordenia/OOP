@@ -26,6 +26,7 @@ bool CCar::IsEngineTurnOn() const
 bool CCar::TurnOnEngine()
 {
 	m_isEngineTurnOn = true;
+	m_error = Error::NO_ERROR;
 	return true;
 }
 
@@ -34,8 +35,11 @@ bool CCar::TurnOffEngine()
 	if (m_gear == 0 && m_speed == 0)
 	{
 		m_isEngineTurnOn = false;
+		m_error = Error::NO_ERROR;
 		return true;
 	}
+
+	m_error = Error::ENGINE_CAN_NOT_BE_TURNED_OFF;
 	return false;
 }
 
@@ -44,6 +48,7 @@ bool CCar::SetGear(int gear)
 	if (gear == 0)
 	{
 		m_gear = gear;
+		m_error = Error::NO_ERROR;
 		return true;
 	}
 
@@ -52,6 +57,7 @@ bool CCar::SetGear(int gear)
 		if ((gear > 0 && m_speed >= 0) || (gear == -1 && m_speed == 0))
 		{
 			m_gear = gear;
+			m_error = Error::NO_ERROR;
 			return true;
 		}
 	}
@@ -77,6 +83,7 @@ bool CCar::SetSpeed(unsigned int speed)
 	if (IsCorrectSpeedForGear(m_gear, speed))
 	{
 		(m_gear == -1) ? (m_speed = -1 * speed) : (m_speed = speed);
+		m_error = Error::NO_ERROR;
 		return true;
 	}
 
@@ -85,6 +92,7 @@ bool CCar::SetSpeed(unsigned int speed)
 		if (speed <= static_cast<unsigned>(abs(m_speed)))
 		{
 			(GetDirection() == Direction::Backward) ? (m_speed = -1 * speed) : (m_speed = speed);
+			m_error = Error::NO_ERROR;
 			return true;
 		}
 
@@ -136,9 +144,7 @@ Direction CCar::GetDirection() const
 	}
 }
 
-Error CCar::GetError()
+Error CCar::GetError() const
 {
-	Error error = m_error;
-	m_error = Error::NO_ERROR;
-	return error;
+	return m_error;
 }

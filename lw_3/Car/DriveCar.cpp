@@ -5,6 +5,37 @@
 #include "DriveCar.h"
 #include "Car.h"
 
+
+std::string ConvertErrorToString(const Error &error)
+{
+	switch (error)
+	{
+	case Error::ENGINE_IS_OFF:
+		return "Engine is off";
+	case Error::ENGINE_CAN_NOT_BE_TURNED_OFF:
+		return "Engine can not be turned off";
+	case Error::NO_ZERO_SPEED:
+		return "First you need to stop";
+	case Error::SPEED_IS_NOT_CORRECT_FOR_GEAR:
+		return "Speed is not correct for gear";
+	case Error::ONLY_REDUCE_THE_SPEED:
+		return "Speed can only be reduced";
+	case Error::SPEED_IS_NOT_CORRECT_FOR_REVERSE_GEAR:
+		return "the speed can be from 0 to 20";
+	case Error::SPEED_IS_NOT_CORRECT_FOR_FIRST_GEAR:
+		return "the speed can be from 0 to 30";
+	case Error::SPEED_IS_NOT_CORRECT_FOR_SECOND_GEAR:
+		return "the speed can be from 20 to 50";
+	case Error::SPEED_IS_NOT_CORRECT_FOR_THIRD_GEAR:
+		return "the speed can be from 30 to 60";
+	case Error::SPEED_IS_NOT_CORRECT_FOR_FOURTH_GEAR:
+		return "the speed can be from 40 to 90";
+	case Error::SPEED_IS_NOT_CORRECT_FOR_FIFTH_GEAR:
+		return "the speed can be from 50 to 150";
+	}
+	return "not error";
+}
+
 CDriveCar::CDriveCar(CCar &car, std::istream & input, std::ostream & output)
 	: m_car(car),
 	m_input(input),
@@ -46,8 +77,14 @@ bool CDriveCar::EngineOn(std::istream &)
 
 bool CDriveCar::EngineOff(std::istream &)
 {
-	m_car.TurnOffEngine();
-	m_output << "Engine is turned off" << std::endl;
+	if (m_car.TurnOffEngine())
+	{
+		m_output << "Engine is turned off" << std::endl;
+	}
+	else
+	{
+		m_output << ConvertErrorToString(m_car.GetError()) << std::endl;
+	}
 	return true;
 }
 
@@ -59,34 +96,6 @@ std::string ConvertDirectionToString(const Direction &direction)
 		return "stop";
 	else
 		return "forward";
-}
-
-std::string ConvertErrorToString(const Error &error)
-{
-	switch (error)
-	{
-	case Error::ENGINE_IS_OFF:
-		return "Engine is off";
-	case Error::NO_ZERO_SPEED:
-		return "First you need to stop";
-	case Error::SPEED_IS_NOT_CORRECT_FOR_GEAR:
-		return "Speed is not correct for gear";
-	case Error::ONLY_REDUCE_THE_SPEED:
-		return "Speed can only be reduced";
-	case Error::SPEED_IS_NOT_CORRECT_FOR_REVERSE_GEAR:
-		return "the speed can be from 0 to 20";
-	case Error::SPEED_IS_NOT_CORRECT_FOR_FIRST_GEAR:
-		return "the speed can be from 0 to 30";
-	case Error::SPEED_IS_NOT_CORRECT_FOR_SECOND_GEAR:
-		return "the speed can be from 20 to 50";
-	case Error::SPEED_IS_NOT_CORRECT_FOR_THIRD_GEAR:
-		return "the speed can be from 30 to 60";
-	case Error::SPEED_IS_NOT_CORRECT_FOR_FOURTH_GEAR:
-		return "the speed can be from 40 to 90";
-	case Error::SPEED_IS_NOT_CORRECT_FOR_FIFTH_GEAR:
-		return "the speed can be from 50 to 150";
-	}
-	return "not error";
 }
 
 bool CDriveCar::Info(std::istream &) const

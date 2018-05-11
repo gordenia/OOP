@@ -11,6 +11,7 @@ enum class Error
 {
 	NO_ERROR,
 	ENGINE_IS_OFF,
+	ENGINE_CAN_NOT_BE_TURNED_OFF,
 	NO_ZERO_SPEED,
 	SPEED_IS_NOT_CORRECT_FOR_GEAR,
 	ONLY_REDUCE_THE_SPEED,
@@ -29,7 +30,7 @@ public:
 	int GetGear() const;
 	unsigned int GetSpeed() const;
 	Direction GetDirection() const;
-	Error GetError();
+	Error GetError() const;
 
 	bool TurnOnEngine();
 	bool TurnOffEngine();
