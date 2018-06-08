@@ -16,7 +16,7 @@ bool FindMaxEx(std::vector<T> const &arr, T &maxValue, Less const &less = Less()
 	{
 		if (less(*max, arr[i]))
 		{
-				max = &arr[i];
+			max = &arr[i];
 		}
 	}
 
