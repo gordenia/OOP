@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include <functional>
+#include "iostream"
 #include "../MyArray/MyArray.h"
 
 struct ArrayItem
@@ -116,17 +116,20 @@ TEST_CASE("can make the size of the array larger")
 	CHECK(arr.GetSize() == 3);
 	CHECK(arr.GetCapacity() == 4);
 
-	arr.Resize(5);
+	arr.Resize(4);
 
-	CHECK(arr.GetSize() == 5);
-	CHECK(arr.GetCapacity() == 5);
+	CHECK(arr.GetSize() == 4);
+	CHECK(arr.GetCapacity() == 4);
+
+	arr.Resize(6);
 
 	CHECK(arr[0] == 1);
 	CHECK(arr[1] == 22);
 	CHECK(arr[2] == 3);
 	CHECK(arr[3] == 0);
 	CHECK(arr[4] == 0);
-	CHECK_THROWS_AS(arr[5], std::out_of_range);
+	CHECK(arr[5] == 0);
+	CHECK_THROWS_AS(arr[6], std::out_of_range);
 }
 
 TEST_CASE("array can be cleared")
@@ -174,5 +177,76 @@ TEST_CASE("array can be moved")
 	CHECK(arrNew[1] == 2);
 	CHECK(arrNew[2] == 3);
 	CHECK_THROWS_AS(arrNew[3], std::out_of_range);
+
+	CMyArray<int> arrNew1;
+	arrNew1 = std::move(arrNew);
+
+	CHECK(arrNew.GetSize() == 0);
+	CHECK(arrNew1.GetSize() == 3);
+	CHECK(arrNew1[0] == 1);
+	CHECK(arrNew1[1] == 2);
+	CHECK(arrNew1[2] == 3);
+	CHECK_THROWS_AS(arrNew1[3], std::out_of_range);
 }
 
+TEST_CASE("has a method begin()")
+{
+	CMyArray<int> arr;
+	arr.Append(1);
+	arr.Append(2);
+	auto it = arr.begin();
+	CHECK(*it == 1);
+}
+
+
+TEST_CASE("has iterators for iterating through elements")
+{
+	CMyArray<int> arr;
+	arr.Append(1);
+	arr.Append(2);
+	arr.Append(3);
+	CMyArray<int>::CMyIterator<int> it;
+	CHECK(it == nullptr);
+	it = arr.begin();
+	CHECK(*it == 1);
+	++it;
+	CHECK(*it == 2);
+	++it;
+	CHECK(*it == 3);
+	--it;
+	CHECK(*it == 2);
+	--it;
+	CHECK(*it == 1);
+}
+
+TEST_CASE("has a method end()")
+{
+	CMyArray<int> arr;
+	arr.Append(1);
+	arr.Append(2);
+	arr.Append(3);
+	auto it = arr.end();
+	--it;
+	CHECK(*it == 3);
+}
+
+TEST_CASE("has a method rbegin()")
+{
+	CMyArray<int> arr;
+	arr.Append(1);
+	arr.Append(2);
+	arr.Append(3);
+	auto it = arr.rbegin();
+	CHECK(*it == 3);
+}
+
+TEST_CASE("has a method rend()")
+{
+	CMyArray<int> arr;
+	arr.Append(1);
+	arr.Append(2);
+	arr.Append(3);
+	auto it = arr.rend();
+	--it;
+	CHECK(*it == 1);
+}

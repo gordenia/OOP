@@ -1,5 +1,6 @@
 #pragma once
 #include <algorithm>
+#include <iterator>
 
 template <typename T>
 class CMyArray
@@ -7,6 +8,7 @@ class CMyArray
 public:
 	CMyArray() = default;
 
+	//конструктор копирования
 	CMyArray(const CMyArray &arr)
 	{
 		const auto size = arr.GetSize();
@@ -26,6 +28,7 @@ public:
 		}
 	}
 
+	//конструктор перемещения
 	CMyArray(CMyArray &&arr)
 		:m_begin(arr.m_begin)
 		, m_end(arr.m_end)
@@ -109,13 +112,6 @@ public:
 			DestroyItems(m_begin + newSize, m_end);
 			m_end = m_end - (currentSize - newSize);
 		}
-		/*else
-		{
-			for (size_t i = 0; i < newSize - currentSize; ++i)
-			{
-				Append(T());
-			}
-		}*/
 		else if (newSize > currentSize && newSize <= GetCapacity())
 		{
 			for (size_t i = 0; i < newSize - currentSize; ++i)
@@ -171,9 +167,10 @@ public:
 		return *this;
 	}
 
+	//оператор присваивания
 	CMyArray &operator = (CMyArray const &rhs)
 	{
-		if (std::addressof(*this) != std::addressof(rhs))
+		if (this != std::addressof(rhs))
 		{
 			CMyArray newArr(rhs);
 
@@ -182,6 +179,73 @@ public:
 			std::swap(m_endOfCapacity, newArr.m_endOfCapacity);
 		}
 		return *this;
+	}
+
+	template<typename T>
+	class CMyIterator : public std::iterator<std::bidirectional_iterator_tag, T>
+	{
+		template <typename> friend class CMyArray;
+
+	public:
+
+		CMyIterator(T *p)
+			: m_pointer(p)
+		{
+		}
+
+		CMyIterator() = default;
+		~CMyIterator() = default;
+
+		T &CMyIterator<T>::operator *() const
+		{
+			return *m_pointer;
+		};
+
+		bool CMyIterator<T>::operator!=(CMyIterator const& rhs) const
+		{
+			return m_pointer != rhs.m_pointer;
+		}
+
+		bool CMyIterator<T>::operator==(CMyIterator const& rhs) const
+		{
+			return m_pointer == rhs.m_pointer;
+		}
+
+		CMyIterator<T> &CMyIterator<T>::operator++()
+		{
+			++m_pointer;
+			return *this;
+		}
+
+		CMyIterator<T> &CMyIterator<T>::operator--()
+		{
+			--m_pointer;
+			return *this;
+		}
+
+	private:
+		T * m_pointer = nullptr;
+	};
+
+	CMyIterator<T> begin()
+	{
+		return CMyIterator<T>(m_begin);
+	}
+
+	CMyIterator<T> end()
+	{
+		return CMyIterator<T>(m_end);
+	}
+	
+	std::reverse_iterator<CMyIterator<T>> rbegin()
+	{
+		return std::reverse_iterator<CMyIterator<T>>(m_end);
+	}
+
+	std::reverse_iterator<CMyIterator<T>> rend()
+		
+	{
+		return std::reverse_iterator<CMyIterator<T>>(m_begin);
 	}
 
 	~CMyArray()
@@ -236,7 +300,7 @@ private:
 	}
 
 private:
-	T *m_begin = nullptr;
+	T * m_begin = nullptr;
 	T *m_end = nullptr;
 	T *m_endOfCapacity = nullptr;
 };
