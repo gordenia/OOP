@@ -1,6 +1,6 @@
 #pragma once
 #include <algorithm>
-#include <iterator>
+#include <boost/iterator/iterator_facade.hpp>
 
 template <typename T>
 class CMyArray
@@ -73,12 +73,12 @@ public:
 		}
 	}
 
-	size_t GetCapacity()const
+	size_t GetCapacity() const noexcept
 	{
 		return m_endOfCapacity - m_begin;
 	}
 
-	size_t GetSize()const
+	size_t GetSize() const noexcept
 	{
 		return m_end - m_begin;
 	}
@@ -114,9 +114,19 @@ public:
 		}
 		else if (newSize > currentSize && newSize <= GetCapacity())
 		{
-			for (size_t i = 0; i < newSize - currentSize; ++i)
+			T *oldEnd = m_end;
+			try
 			{
-				Append(T());
+				for (size_t i = 0; i < newSize - currentSize; ++i)
+				{
+					Append(T());
+				}
+			}
+			catch (...)
+			{
+				DeleteItems(oldEnd + 1, m_end);
+				m_end = oldEnd;
+				throw;
 			}
 		}
 		else if (newSize > GetCapacity())
@@ -132,26 +142,38 @@ public:
 				DeleteItems(newBegin, newEnd);
 				throw;
 			}
+
 			DeleteItems(m_begin, m_end);
 
 			m_begin = newBegin;
 			m_end = newEnd;
 			m_endOfCapacity = m_begin + newSize;
-			for (size_t i = GetSize(); i < GetCapacity(); ++i)
+
+			try
 			{
-				Append(T());
+				for (size_t i = GetSize(); i < GetCapacity(); ++i)
+				{
+					Append(T());
+				}
 			}
+			catch (...)
+			{
+				DeleteItems(newEnd, m_end);
+				m_end = newEnd;
+				throw;
+			}
+
 		}
 	}
 
-	void Clear()
+	void Clear() noexcept
 	{
 		DestroyItems(m_begin, m_end);
 		m_end = m_begin;
 	}
 
 	//Перемещающий оператор присваивания
-	CMyArray &operator = (CMyArray && rhs)
+	CMyArray &operator = (CMyArray && rhs) noexcept
 	{
 		if (&rhs != this)
 		{
@@ -168,7 +190,7 @@ public:
 	}
 
 	//оператор присваивания
-	CMyArray &operator = (CMyArray const &rhs)
+	CMyArray &operator = (CMyArray const &rhs) noexcept
 	{
 		if (this != std::addressof(rhs))
 		{
@@ -182,68 +204,92 @@ public:
 	}
 
 	template<typename T>
-	class CMyIterator : public std::iterator<std::bidirectional_iterator_tag, T>
+	class CMyIterator : public boost::iterator_facade<CMyIterator<T>, T, std::random_access_iterator_tag>
 	{
 		template <typename> friend class CMyArray;
-
 	public:
 
+		T &CMyIterator<T>::operator *() const noexcept
+		{
+			return *m_pointer;
+		};
+
+		void increment()
+		{
+			++m_pointer;
+		}
+
+		void decrement()
+		{
+			--m_pointer;
+		}
+
+	private:
 		CMyIterator(T *p)
 			: m_pointer(p)
 		{
 		}
 
-		CMyIterator() = default;
-		~CMyIterator() = default;
-
-		T &CMyIterator<T>::operator *() const
-		{
-			return *m_pointer;
-		};
-
-		bool CMyIterator<T>::operator!=(CMyIterator const& rhs) const
-		{
-			return m_pointer != rhs.m_pointer;
-		}
-
-		bool CMyIterator<T>::operator==(CMyIterator const& rhs) const
-		{
-			return m_pointer == rhs.m_pointer;
-		}
-
-		CMyIterator<T> &CMyIterator<T>::operator++()
-		{
-			++m_pointer;
-			return *this;
-		}
-
-		CMyIterator<T> &CMyIterator<T>::operator--()
-		{
-			--m_pointer;
-			return *this;
-		}
-
 	private:
-		T * m_pointer = nullptr;
+		T *m_pointer = nullptr;
 	};
 
-	CMyIterator<T> begin()
+	CMyIterator<const T> begin() const noexcept
+	{
+		return CMyIterator<const T>(m_begin);
+	}
+
+	CMyIterator<const T> end() const noexcept
+	{
+		return CMyIterator<const T>(m_end);
+	}
+
+	std::reverse_iterator<CMyIterator<const T>> rbegin() const noexcept
+	{
+		return std::reverse_iterator<CMyIterator<const T>>(m_end);
+	}
+
+	std::reverse_iterator<CMyIterator<const T>> rend() const noexcept
+	{
+		return std::reverse_iterator<CMyIterator<const T>>(m_begin);
+	}
+
+	CMyIterator<const T> cbegin() const noexcept
+	{	
+		return (begin());
+	}
+
+	CMyIterator<const T> cend() const noexcept
+	{
+		return (end());
+	}
+
+	CMyIterator<const T> crbegin() const noexcept
+	{
+		return (rbegin());
+	}
+
+	CMyIterator<const T> crend() const noexcept
+	{
+		return (rend());
+	}
+
+	CMyIterator<T> begin() noexcept
 	{
 		return CMyIterator<T>(m_begin);
 	}
 
-	CMyIterator<T> end()
+	CMyIterator<T> end() noexcept
 	{
 		return CMyIterator<T>(m_end);
 	}
-	
-	std::reverse_iterator<CMyIterator<T>> rbegin()
+
+	std::reverse_iterator<CMyIterator<T>> rbegin() noexcept
 	{
 		return std::reverse_iterator<CMyIterator<T>>(m_end);
 	}
 
-	std::reverse_iterator<CMyIterator<T>> rend()
-		
+	std::reverse_iterator<CMyIterator<T>> rend() noexcept
 	{
 		return std::reverse_iterator<CMyIterator<T>>(m_begin);
 	}
@@ -282,7 +328,7 @@ private:
 		RawDealloc(begin);
 	}
 
-	static void DestroyItems(T *from, T *to)
+	static void DestroyItems(T *from, T *to) noexcept
 	{
 		// dst - адрес объект, при конструирование которого было выброшено исключение
 		// to - первый сконструированный объект

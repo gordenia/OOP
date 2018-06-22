@@ -198,26 +198,75 @@ TEST_CASE("has a method begin()")
 	CHECK(*it == 1);
 }
 
+TEST_CASE("has a method const begin()")
+{
+	CMyArray<int> arr;
+	arr.Append(1);
+	arr.Append(2);
+	auto const it = arr.begin();
+	CHECK(*it == 1);
+}
 
-TEST_CASE("has iterators for iterating through elements")
+
+
+TEST_CASE("can be incremented by prefix operator")
 {
 	CMyArray<int> arr;
 	arr.Append(1);
 	arr.Append(2);
 	arr.Append(3);
-	CMyArray<int>::CMyIterator<int> it;
-	CHECK(it == nullptr);
-	it = arr.begin();
+	auto it = arr.begin();
 	CHECK(*it == 1);
 	++it;
 	CHECK(*it == 2);
 	++it;
+	CHECK(*it == 3);
+}
+
+TEST_CASE("can be incremented by postfix operator")
+{
+	CMyArray<int> arr;
+	arr.Append(1);
+	arr.Append(2);
+	arr.Append(3);
+	auto it = arr.begin();
+	CHECK(*it == 1);
+	it++;
+	CHECK(*it == 2);
+	it++;
+	CHECK(*it == 3);
+}
+
+TEST_CASE("can be decremented by prefix operator")
+{
+	CMyArray<int> arr;
+	arr.Append(1);
+	arr.Append(2);
+	arr.Append(3);
+	auto it = arr.end();
+	--it;
 	CHECK(*it == 3);
 	--it;
 	CHECK(*it == 2);
 	--it;
 	CHECK(*it == 1);
 }
+
+TEST_CASE("can be decremented by postfix operator")
+{
+	CMyArray<int> arr;
+	arr.Append(1);
+	arr.Append(2);
+	arr.Append(3);
+	auto it = arr.end();
+	it--;
+	CHECK(*it == 3);
+	it--;
+	CHECK(*it == 2);
+	it--;
+	CHECK(*it == 1);
+}
+
 
 TEST_CASE("has a method end()")
 {
@@ -250,3 +299,16 @@ TEST_CASE("has a method rend()")
 	--it;
 	CHECK(*it == 1);
 }
+
+
+TEST_CASE("iterator has a operator ->")
+{
+	CMyArray<int> arr;
+	arr.Append(1);
+	arr.Append(2);
+	arr.Append(3);
+
+	CHECK(*((&arr)->begin()) == 1);
+	CHECK(*(--((&arr)->end())) == 3);
+}
+
